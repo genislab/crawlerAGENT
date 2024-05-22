@@ -8,7 +8,7 @@ import { isWithinTokenLimit } from "gpt-tokenizer";
 import { PathLike } from "fs";
 
 let pageCounter = 0;
-let crawler: PlaywrightCrawler;
+let crawlingAgent: PlaywrightCrawler;
 
 export function getPageHtml(page: Page, selector = "body") {
   return page.evaluate((selector) => {
@@ -48,20 +48,20 @@ export async function waitForXPath(page: Page, xpath: string, timeout: number) {
   );
 }
 
-export async function crawl(config: Config) {
+export async function genisCrawl(config: Config) {
   configSchema.parse(config);
 
   if (process.env.NO_CRAWL !== "true") {
     // PlaywrightCrawler crawls the web using a headless
     // browser controlled by the Playwright library.
-    crawler = new PlaywrightCrawler(
+    crawlingAgent = new PlaywrightCrawler(
       {
         // Use the requestHandler to process each of the crawled pages.
         async requestHandler({ request, page, enqueueLinks, log, pushData }) {
           const title = await page.title();
           pageCounter++;
           log.info(
-            `Crawling: Page ${pageCounter} / ${config.maxPagesToCrawl} - URL: ${request.loadedUrl}...`,
+            `GENIS AGENT :: Processing Pages ${pageCounter} / ${config.maxPagesToCrawl} - URL: ${request.loadedUrl}...`,
           );
 
           // Use custom handling for XPath selector
@@ -144,13 +144,13 @@ export async function crawl(config: Config) {
       const listOfUrls = await downloadListOfUrls({ url: config.url });
 
       // Add the initial URL to the crawling queue.
-      await crawler.addRequests(listOfUrls);
+      await crawlingAgent.addRequests(listOfUrls);
 
-      // Run the crawler
-      await crawler.run();
+      // Run the crawlingAgent
+      await crawlingAgent.run();
     } else {
       // Add first URL to the queue and start the crawl.
-      await crawler.run([config.url]);
+      await crawlingAgent.run([config.url]);
     }
   }
 }
@@ -244,7 +244,7 @@ export async function write(config: Config) {
   return nextFileNameString;
 }
 
-class GPTCrawlerCore {
+class AGENT {
   config: Config;
 
   constructor(config: Config) {
@@ -252,7 +252,7 @@ class GPTCrawlerCore {
   }
 
   async crawl() {
-    await crawl(this.config);
+    await genisCrawl(this.config);
   }
 
   async write(): Promise<PathLike> {
@@ -267,4 +267,4 @@ class GPTCrawlerCore {
   }
 }
 
-export default GPTCrawlerCore;
+export default AGENT;

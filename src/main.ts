@@ -1,5 +1,5 @@
 import { defaultConfig } from "../config.js";
-import { crawl, write } from "./core.js";
+import { genisCrawl, write } from "./core.js";
 
-await crawl(defaultConfig);
+await genisCrawl(defaultConfig);
 await write(defaultConfig);

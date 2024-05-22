@@ -2,7 +2,7 @@
 
 import { program } from "commander";
 import { Config } from "./config.js";
-import { crawl, write } from "./core.js";
+import { genisCrawl, write } from "./core.js";
 import { createRequire } from "node:module";
 import inquirer from "inquirer";
 
@@ -73,7 +73,7 @@ async function handler(options: Config) {
       };
     }
 
-    await crawl(config);
+    await genisCrawl(config);
     await write(config);
   } catch (error) {
     console.log(error);
